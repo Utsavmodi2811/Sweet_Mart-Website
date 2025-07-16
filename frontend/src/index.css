@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Baloo+Bhai+2:wght@400;500;600;700&family=Mukta:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Festive Indian Sweets Shop Design System */
+
+@layer base {
+  :root {
+    /* Festive Indian Color Palette */
+    --background: 39 100% 98%;
+    --foreground: 28 25% 15%;
+
+    --card: 39 85% 96%;
+    --card-foreground: 28 25% 15%;
+
+    --popover: 39 100% 98%;
+    --popover-foreground: 28 25% 15%;
+
+    /* Saffron & Gold Primary */
+    --primary: 36 100% 55%;
+    --primary-foreground: 39 100% 98%;
+    --primary-light: 38 95% 70%;
+    --primary-dark: 34 100% 45%;
+
+    /* Festive Secondary Colors */
+    --secondary: 45 100% 85%;
+    --secondary-foreground: 28 25% 15%;
+    --secondary-light: 48 100% 90%;
+
+    --muted: 42 50% 92%;
+    --muted-foreground: 28 15% 45%;
+
+    --accent: 320 65% 75%;
+    --accent-foreground: 28 25% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 39 100% 98%;
+
+    --border: 42 30% 88%;
+    --input: 42 30% 88%;
+    --ring: 36 100% 55%;
+
+    --radius: 0.75rem;
+
+    /* Festive Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-festive: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-gold: linear-gradient(135deg, hsl(45 100% 60%), hsl(38 95% 70%));
+    --gradient-warm: linear-gradient(180deg, hsl(39 100% 98%), hsl(42 50% 92%));
+
+    /* Shadows */
+    --shadow-festive: 0 8px 32px hsl(var(--primary) / 0.15);
+    --shadow-warm: 0 4px 16px hsl(45 100% 60% / 0.2);
+    --shadow-soft: 0 2px 8px hsl(28 25% 15% / 0.08);
+
+    /* Animations */
+    --transition-festive: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.3s ease-out;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark Festive Theme */
+    --background: 28 25% 8%;
+    --foreground: 39 100% 95%;
+
+    --card: 28 20% 12%;
+    --card-foreground: 39 100% 95%;
+
+    --popover: 28 25% 8%;
+    --popover-foreground: 39 100% 95%;
+
+    --primary: 36 95% 65%;
+    --primary-foreground: 28 25% 8%;
+    --primary-light: 38 90% 75%;
+    --primary-dark: 34 95% 55%;
+
+    --secondary: 28 20% 18%;
+    --secondary-foreground: 39 100% 95%;
+    --secondary-light: 28 15% 22%;
+
+    --muted: 28 15% 15%;
+    --muted-foreground: 39 20% 65%;
+
+    --accent: 320 60% 70%;
+    --accent-foreground: 39 100% 95%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 39 100% 95%;
+
+    --border: 28 15% 20%;
+    --input: 28 15% 20%;
+    --ring: 36 95% 65%;
+
+    /* Dark Mode Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-festive: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-gold: linear-gradient(135deg, hsl(45 85% 55%), hsl(38 80% 65%));
+    --gradient-warm: linear-gradient(180deg, hsl(28 25% 8%), hsl(28 15% 15%));
+
+    /* Dark Shadows */
+    --shadow-festive: 0 8px 32px hsl(var(--primary) / 0.25);
+    --shadow-warm: 0 4px 16px hsl(45 85% 55% / 0.3);
+    --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.3);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-poppins;
+  }
+}
+
+@layer components {
+  /* Festive Components */
+  .btn-festive {
+    @apply bg-gradient-to-r from-primary to-primary-light text-primary-foreground 
+           px-6 py-3 rounded-lg font-medium shadow-festive 
+           hover:shadow-warm hover:scale-105;
+    transition: var(--transition-festive);
+  }
+
+  .btn-gold {
+    @apply bg-gradient-to-r from-[hsl(45_100%_60%)] to-[hsl(38_95%_70%)] 
+           text-primary-foreground px-6 py-3 rounded-lg font-medium 
+           shadow-warm hover:shadow-festive hover:scale-105;
+    transition: var(--transition-festive);
+  }
+
+  .card-festive {
+    @apply bg-card border border-border rounded-xl shadow-soft 
+           hover:shadow-festive hover:scale-[1.02];
+    transition: var(--transition-festive);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+
+  .floating-whatsapp {
+    @apply fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 
+           text-white w-14 h-14 rounded-full flex items-center justify-center 
+           shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110;
+  }
+
+  .festival-card {
+    @apply bg-gradient-to-br from-card to-secondary/30 
+           border border-border rounded-xl p-6 shadow-soft 
+           hover:shadow-festive hover:scale-105;
+    transition: var(--transition-festive);
+  }
+
+  .product-card {
+    @apply bg-card border border-border rounded-xl overflow-hidden 
+           shadow-soft hover:shadow-festive hover:scale-[1.02];
+    transition: var(--transition-festive);
+  }
+}
+
+@layer utilities {
+  /* Custom animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
+    50% { box-shadow: 0 0 30px hsl(var(--primary) / 0.6); }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+}
