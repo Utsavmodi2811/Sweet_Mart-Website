@@ -10,22 +10,10 @@ import logo from '../assets/logo.png';
 const Index = () => {
   const { t, i18n } = useTranslation();
   const isGujarati = i18n.language === 'gu';
-  const [festivalSectionTitle, setFestivalSectionTitle] = useState("");
-  const [festivalTitleLoading, setFestivalTitleLoading] = useState(true);
   const [festivals, setFestivals] = useState([]);
   const [festivalsLoading, setFestivalsLoading] = useState(true);
   const [popularProducts, setPopularProducts] = useState([]);
   const [popularLoading, setPopularLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/settings/festivalSectionTitle')
-      .then(res => res.json())
-      .then(data => {
-        setFestivalSectionTitle(data.value || "");
-        setFestivalTitleLoading(false);
-      })
-      .catch(() => setFestivalTitleLoading(false));
-  }, []);
 
   useEffect(() => {
     fetch('/api/festivals')
@@ -56,6 +44,8 @@ const Index = () => {
     { id: 5, name: 'Barfi', image: 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?w=400', price: 350 },
     { id: 6, name: 'Gulab Jamun', image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400', price: 250 },
   ];
+
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   return (
     <div className="min-h-screen">
@@ -108,9 +98,7 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="text-center mb-12 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-baloo font-bold gradient-text mb-4">
-              {festivalTitleLoading
-                ? '...'
-                : festivalSectionTitle || 'Festival Specials'}
+              {festivals[0]?.sectionTitle || 'Festival Specials'}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Celebrate every festival with our special traditional sweets and treats
@@ -120,33 +108,34 @@ const Index = () => {
             <div className="text-center py-8 text-muted-foreground">Loading...</div>
           ) : festivals.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">No festival products found. Add some in the admin panel!</div>
-          ) : festivals.length > 5 ? (
-            <Carousel className="w-full">
+          ) : (
+            <Carousel className="w-full" opts={{ loop: true }}>
               <CarouselContent>
                 {festivals.map((festival, index) => (
-                  <CarouselItem key={festival._id || festival.id || index} className="md:basis-1/3 lg:basis-1/4">
-                    <Card className="festival-card animate-fade-in-up">
-                      <div className="relative overflow-hidden rounded-t-xl">
+                  <CarouselItem key={festival._id || festival.id || index} className="md:basis-1/2 lg:basis-1/3">
+                    <Card className="product-card group animate-fade-in-up relative overflow-visible">
+                      {/* Festival Special Banner */}
+                      <div className="absolute top-4 left-4 z-10">
+                        <span className="inline-block bg-gradient-to-r from-yellow-300 via-pink-200 to-yellow-400 text-yellow-900 font-extrabold px-4 py-1 rounded-full shadow-lg border-2 border-yellow-500 text-base tracking-wider drop-shadow-md animate-pulse">
+                          🎉 Festival Special
+                        </span>
+                      </div>
+                      <div className="relative overflow-hidden">
                         <img
-                          src={festival.image}
+                          src={`${backendUrl}${festival.image}`}
                           alt={festival.name}
-                          className="w-full h-40 object-cover"
+                          className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500 bg-gray-100"
+                          onError={e => { e.target.src = '/public/placeholder.svg'; }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                        <div className="absolute bottom-3 left-3 right-3">
-                          <h3 className="font-baloo font-semibold text-white text-lg">
-                            {festival.name}
-                          </h3>
-                        </div>
                       </div>
-                      <div className="p-4">
-                        <p className="text-sm text-muted-foreground">
+                      <CardContent className="p-6">
+                        <h3 className="font-extrabold text-2xl mb-2 text-yellow-900 font-baloo">
+                          {festival.name}
+                        </h3>
+                        <div className="text-base text-muted-foreground mb-2">
                           {festival.description}
-                        </p>
-                        <div className="mt-3 flex items-center text-primary text-sm font-medium">
-                          Festival Special
                         </div>
-                      </div>
+                      </CardContent>
                     </Card>
                   </CarouselItem>
                 ))}
@@ -156,34 +145,6 @@ const Index = () => {
                 <CarouselNext />
               </div>
             </Carousel>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {festivals.map((festival, index) => (
-                <Card key={festival._id || festival.id || index} className="festival-card animate-fade-in-up">
-                  <div className="relative overflow-hidden rounded-t-xl">
-                    <img
-                      src={festival.image}
-                      alt={festival.name}
-                      className="w-full h-40 object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <h3 className="font-baloo font-semibold text-white text-lg">
-                        {festival.name}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm text-muted-foreground">
-                      {festival.description}
-                    </p>
-                    <div className="mt-3 flex items-center text-primary text-sm font-medium">
-                      Festival Special
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
           )}
         </div>
       </section>

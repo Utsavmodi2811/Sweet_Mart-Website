@@ -26,4 +26,34 @@ exports.updateSetting = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
+};
+
+// Get festival section title
+exports.getFestivalSectionTitle = async (req, res) => {
+  try {
+    let setting = await Setting.findOne({ key: 'festivalSectionTitle' });
+    if (!setting) {
+      // Default value if not set
+      setting = await Setting.create({ key: 'festivalSectionTitle', value: '' });
+    }
+    res.json({ value: setting.value });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Update festival section title
+exports.updateFestivalSectionTitle = async (req, res) => {
+  try {
+    const { value } = req.body;
+    if (typeof value !== 'string') return res.status(400).json({ error: 'Value must be a string.' });
+    const setting = await Setting.findOneAndUpdate(
+      { key: 'festivalSectionTitle' },
+      { value },
+      { new: true, upsert: true }
+    );
+    res.json({ value: setting.value });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
 }; 

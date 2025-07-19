@@ -11,7 +11,6 @@ app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true
 }));
-app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 const festivalRoutes = require('./routes/festivalRoutes');
@@ -21,9 +20,9 @@ app.use('/api/gallery', galleryRoutes);
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 const productRoutes = require('./routes/productRoutes');
-app.use('/api/products', productRoutes);
+app.use('/api/products', express.json(), productRoutes); // Only apply express.json() to products
 const settingRoutes = require('./routes/settingRoutes');
-app.use('/api/settings', settingRoutes);
+app.use('/api/settings', express.json(), settingRoutes); // Only apply express.json() to settings
 const uploadRoutes = require('./routes/uploadRoutes');
 app.use('/api/upload', uploadRoutes);
 

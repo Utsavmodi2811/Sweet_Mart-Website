@@ -3,13 +3,13 @@ const router = express.Router();
 const galleryController = require('../controllers/galleryController');
 const upload = require('../middleware/upload');
 
-// Public routes
+// List all images
 router.get('/', galleryController.getAllImages);
-router.get('/:id', galleryController.getImageById);
-
-// Admin routes (add auth middleware later)
+// Upload new image
 router.post('/', upload.single('image'), galleryController.uploadImage);
-router.put('/:id', galleryController.updateImage);
+// Update image
+router.put('/:id', upload.single('image'), galleryController.updateImage);
+// Delete image
 router.delete('/:id', galleryController.deleteImage);
 
 module.exports = router; 

@@ -21,9 +21,6 @@ function AdminPanel() {
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [festivalTitle, setFestivalTitle] = useState("");
-  const [festivalTitleLoading, setFestivalTitleLoading] = useState(false);
-  const [festivalTitleSuccess, setFestivalTitleSuccess] = useState("");
   const [festivalProducts, setFestivalProducts] = useState([]);
   const [festivalForm, setFestivalForm] = useState({
     name: '',
@@ -36,23 +33,38 @@ function AdminPanel() {
   const [festivalError, setFestivalError] = useState('');
   const [productImageFile, setProductImageFile] = useState(null);
 
-  // Fetch products
-  useEffect(() => {
-    fetch(`${API_URL}/api/products`, {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch(() => setError("Failed to fetch products"));
-  }, [loading]);
+  const CATEGORY_OPTIONS = [
+    { value: 'sweets', label: 'Sweets', subcategories: [
+      { value: 'dryfruit', label: 'Dryfruit Sweet' },
+      { value: 'milk', label: 'Milk Sweet' },
+      { value: 'traditional', label: 'Traditional Sweet' },
+      { value: 'bengali', label: 'Bengali Sweet' },
+      { value: 'other', label: 'Other Sweet' },
+    ]},
+    { value: 'namkeen', label: 'Namkeen', subcategories: [
+      { value: 'sev', label: 'Sev' },
+      { value: 'ghathiya', label: 'Gathiya' },
+      { value: 'wafer', label: 'Wafer' },
+      { value: 'mixture', label: 'Mixture' },
+      { value: 'other', label: 'Other Namkeen' },
+    ]},
+    { value: 'bakery', label: 'Bakery', subcategories: [
+      { value: 'cookies', label: 'Cookies' },
+      { value: 'toast', label: 'Toast' },
+      { value: 'cake', label: 'Cake' },
+      { value: 'other', label: 'Other Bakery' },
+    ]},
+  ];
 
-  // Fetch festival section title on mount
-  useEffect(() => {
-    fetch(`${API_URL}/api/settings/festivalSectionTitle`)
-      .then(res => res.json())
-      .then(data => setFestivalTitle(data.value || ""))
-      .catch(() => setFestivalTitle(""));
-  }, []);
+  // Refetch products after add/edit/delete
+  const fetchProducts = () => {
+    setLoading(true);
+    fetch(`${API_URL}/api/products`, { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => { setProducts(data); setLoading(false); })
+      .catch(() => { setError("Failed to fetch products"); setLoading(false); });
+  };
+  useEffect(() => { fetchProducts(); }, []);
 
   // Fetch festival products
   useEffect(() => {
@@ -65,6 +77,17 @@ function AdminPanel() {
   // Handle form input
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Update subcategory if category changes
+  const handleCategoryChange = (e) => {
+    const newCategory = e.target.value;
+    const selectedCat = CATEGORY_OPTIONS.find(c => c.value === newCategory);
+    setForm(f => ({
+      ...f,
+      category: newCategory,
+      subcategory: selectedCat && selectedCat.subcategories.length > 0 ? selectedCat.subcategories[0].value : ''
+    }));
   };
 
   // Add or update product
@@ -99,7 +122,7 @@ function AdminPanel() {
       setForm({ name: "", description: "", price: "", image: "", category: "sweets", subcategory: "", stock: 0 });
       setProductImageFile(null);
       setEditingId(null);
-      setLoading(false);
+      fetchProducts();
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -131,29 +154,11 @@ function AdminPanel() {
         credentials: "include",
       });
       if (!res.ok) throw new Error("Failed to delete product");
-      setLoading(false);
+      fetchProducts();
     } catch (err) {
       setError(err.message);
       setLoading(false);
     }
-  };
-
-  const handleFestivalTitleUpdate = async (e) => {
-    e.preventDefault();
-    setFestivalTitleLoading(true);
-    setFestivalTitleSuccess("");
-    try {
-      const res = await fetch(`${API_URL}/api/settings/festivalSectionTitle`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value: festivalTitle }),
-      });
-      if (!res.ok) throw new Error("Failed to update title");
-      setFestivalTitleSuccess("Festival section title updated!");
-    } catch {
-      setFestivalTitleSuccess("Failed to update title");
-    }
-    setFestivalTitleLoading(false);
   };
 
   // Handle festival form input
@@ -231,30 +236,13 @@ function AdminPanel() {
     navigate("/admin-login");
   };
 
+  const selectedCategory = CATEGORY_OPTIONS.find(c => c.value === form.category) || CATEGORY_OPTIONS[0];
+
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Admin Panel - Manage Products</h1>
         <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
-      </div>
-      {/* Festival Section Title Management */}
-      <div className="mb-8 bg-gradient-to-br from-yellow-100 to-pink-100 rounded-lg shadow p-4">
-        <h2 className="text-lg font-bold mb-2">Festival Section Title</h2>
-        <p className="text-sm text-muted-foreground mb-2">This is the heading shown above the festival products on your home page. Use it to highlight the current festival or theme (e.g., "Ganesh Chaturthi Specials").</p>
-        <form onSubmit={handleFestivalTitleUpdate} className="flex gap-2 items-center">
-          <input
-            type="text"
-            value={festivalTitle}
-            onChange={e => setFestivalTitle(e.target.value)}
-            placeholder="e.g. Ganesh Chaturthi Specials"
-            className="border p-2 rounded flex-1"
-            required
-          />
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" disabled={festivalTitleLoading}>
-            {festivalTitleLoading ? "Saving..." : "Save"}
-          </button>
-        </form>
-        {festivalTitleSuccess && <div className="mt-2 text-green-600">{festivalTitleSuccess}</div>}
       </div>
 
       {/* Festival Product Management */}
@@ -337,13 +325,17 @@ function AdminPanel() {
           <input name="name" value={form.name} onChange={handleChange} placeholder="Name" required className="border p-2 rounded" />
           <input name="description" value={form.description} onChange={handleChange} placeholder="Description" required className="border p-2 rounded" />
           <input name="price" value={form.price} onChange={handleChange} placeholder="Price" type="number" required className="border p-2 rounded" />
-          <input name="subcategory" value={form.subcategory} onChange={handleChange} placeholder="Subcategory" className="border p-2 rounded" />
-          <select name="category" value={form.category} onChange={handleChange} className="border p-2 rounded">
-            <option value="sweets">Sweets</option>
-            <option value="namkeen">Namkeen</option>
-            <option value="bakery">Bakery</option>
+          <select name="category" value={form.category} onChange={handleCategoryChange} className="border p-2 rounded" required>
+            {CATEGORY_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
           </select>
-          <input name="stock" value={form.stock} onChange={handleChange} placeholder="Stock" type="number" className="border p-2 rounded" />
+          <select name="subcategory" value={form.subcategory} onChange={handleChange} className="border p-2 rounded" required>
+            {selectedCategory.subcategories.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          <input name="stock" value={form.stock} onChange={handleChange} placeholder="Stock" type="number" min="0" className="border p-2 rounded" required />
           <input
             type="file"
             accept="image/*"

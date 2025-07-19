@@ -33,7 +33,11 @@ const Header = () => {
     { path: '/gallery', label: 'Gallery' },
     { path: '/contact', label: 'Contact' },
   ];
-  if (isAdmin) navItems.push({ path: '/admin', label: 'Admin' });
+  if (isAdmin) {
+    navItems.push({ path: '/admin', label: 'Admin' });
+    navItems.push({ path: '/admin/festival-specials', label: 'Festival Admin' });
+    navItems.push({ path: '/admin/gallery', label: 'Gallery Admin' });
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border shadow-soft">

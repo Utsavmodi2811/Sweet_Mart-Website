@@ -1,3 +1,4 @@
+<div style={{background: 'red', color: 'white'}}>TEST CHANGE</div>
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Filter, Search, ShoppingCart } from 'lucide-react';
@@ -17,6 +18,31 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('all');
+
+  const CATEGORY_OPTIONS = [
+    { value: 'sweets', label: t('sweets'), subcategories: [
+      { value: 'dryfruit', label: 'Dryfruit Sweet' },
+      { value: 'milk', label: 'Milk Sweet' },
+      { value: 'traditional', label: 'Traditional Sweet' },
+      { value: 'bengali', label: 'Bengali Sweet' },
+      { value: 'other', label: 'Other Sweet' },
+    ]},
+    { value: 'namkeen', label: t('namkeen'), subcategories: [
+      { value: 'sev', label: 'Sev' },
+      { value: 'ghathiya', label: 'Gathiya' },
+      { value: 'wafer', label: 'Wafer' },
+      { value: 'mixture', label: 'Mixture' },
+      { value: 'other', label: 'Other Namkeen' },
+    ]},
+    { value: 'bakery', label: t('bakery'), subcategories: [
+      { value: 'cookies', label: 'Cookies' },
+      { value: 'toast', label: 'Toast' },
+      { value: 'cake', label: 'Cake' },
+      { value: 'other', label: 'Other Bakery' },
+    ]},
+  ];
+  const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     setLoading(true);
@@ -41,19 +67,54 @@ const Products = () => {
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+    const selectedCategoryObj = CATEGORY_OPTIONS.find(c => c.value === selectedCategory);
+    const matchesSubcategory = selectedSubcategory === 'all' || !selectedCategoryObj || product.subcategory === selectedSubcategory;
     const matchesSearch = searchTerm === '' || 
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (product.nameGu && product.nameGu.includes(searchTerm));
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesSubcategory && matchesSearch;
   });
 
-  // Group products by subcategory
+  // Group products by subcategory for the selected category
   const groupedBySubcategory = filteredProducts.reduce((acc, product) => {
     const subcat = product.subcategory || 'Other';
     if (!acc[subcat]) acc[subcat] = [];
     acc[subcat].push(product);
     return acc;
   }, {});
+  const hasSubcategories = Object.keys(groupedBySubcategory).length > 1 || (Object.keys(groupedBySubcategory)[0] !== 'Other');
+
+  // Find subcategories present in filtered products for the selected category
+  const availableSubcategories = Array.from(new Set(
+    products
+      .filter(p => selectedCategory === 'all' || p.category === selectedCategory)
+      .map(p => p.subcategory)
+      .filter(Boolean)
+  ));
+
+  const SUBCATEGORY_DISPLAY = {
+    dryfruit: { label: 'Dryfruit Sweets', icon: '🥜' },
+    milk: { label: 'Milk Sweets', icon: '🥛' },
+    traditional: { label: 'Traditional Sweets', icon: '🍬' },
+    bengali: { label: 'Bengali Sweets', icon: '🍥' },
+    other: { label: 'Other Sweets', icon: '🍭' },
+    sev: { label: 'Sev', icon: '🍝' },
+    ghathiya: { label: 'Gathiya', icon: '🥨' },
+    wafer: { label: 'Wafer', icon: '🍘' },
+    mixture: { label: 'Mixture', icon: '🥗' },
+    cookies: { label: 'Cookies', icon: '🍪' },
+    toast: { label: 'Toast', icon: '🍞' },
+    cake: { label: 'Cake', icon: '🍰' },
+    pastry: { label: 'Pastry', icon: '🧁' },
+    Other: { label: 'Other', icon: '🛒' },
+  };
+  const SUBCATEGORY_ORDER = [
+    'milk', 'dryfruit', 'traditional', 'bengali', 'other',
+    'sev', 'ghathiya', 'wafer', 'mixture',
+    'cookies', 'toast', 'cake', 'pastry', 'Other',
+  ];
+
+  const presentSubcategories = SUBCATEGORY_ORDER.filter(subcat => Object.keys(groupedBySubcategory).includes(subcat));
 
   const handlePayment = (product) => {
     // Razorpay integration would go here
@@ -88,22 +149,30 @@ const Products = () => {
               />
             </div>
 
-            {/* Category Filters */}
+            {/* Category & Subcategory Filters */}
             <div className="flex flex-wrap gap-2">
               {categories.map(category => (
                 <Badge
                   key={category.id}
                   variant={selectedCategory === category.id ? "default" : "outline"}
-                  className={`cursor-pointer px-4 py-2 ${
-                    selectedCategory === category.id 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'hover:bg-primary/10'
-                  }`}
-                  onClick={() => setSelectedCategory(category.id)}
+                  className={`cursor-pointer px-4 py-2 ${selectedCategory === category.id ? 'bg-primary text-primary-foreground' : 'hover:bg-primary/10'}`}
+                  onClick={() => { setSelectedCategory(category.id); setSelectedSubcategory('all'); }}
                 >
                   {category.label}
                 </Badge>
               ))}
+              {selectedCategory !== 'all' && hasSubcategories && (
+                <select
+                  value={selectedSubcategory}
+                  onChange={e => setSelectedSubcategory(e.target.value)}
+                  className="ml-4 border rounded px-2 py-1 text-sm"
+                >
+                  <option value="all">All Subcategories</option>
+                  {presentSubcategories.map(subcat => (
+                    <option key={subcat} value={subcat}>{SUBCATEGORY_DISPLAY[subcat]?.label || subcat}</option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
         </div>
@@ -112,18 +181,27 @@ const Products = () => {
         {error && <div className="text-center text-red-500 py-12">{error}</div>}
 
         {/* Products Grid - Grouped by Subcategory */}
-        {!loading && !error && Object.keys(groupedBySubcategory).map((subcat) => (
+        {!loading && !error && presentSubcategories.map((subcat) => (
           <div key={subcat} className="mb-10">
-            <h2 className="text-2xl font-bold mb-4 text-primary">{subcat}</h2>
+            <h2 className="text-2xl font-bold mb-4 text-primary flex items-center gap-2">
+              <span>{SUBCATEGORY_DISPLAY[subcat]?.icon || '🛒'}</span>
+              {SUBCATEGORY_DISPLAY[subcat]?.label || subcat}
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {groupedBySubcategory[subcat].map((product, index) => (
+              {groupedBySubcategory[subcat]
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((product, index) => (
                 <Card key={product.id || product._id} className="product-card group animate-fade-in-up" style={{ animationDelay: `${index * 0.05}s` }}>
                   <div className="relative overflow-hidden">
                     <img
-                      src={product.image}
+                      src={product.image.startsWith('/uploads') ? `${backendUrl}${product.image}` : product.image}
                       alt={isGujarati ? product.nameGu : product.name}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
                     />
+                    {product.stock === 0 && (
+                      <Badge className="absolute top-3 left-3 bg-red-600 text-white text-xs px-3 py-1 rounded-full z-10">Out of Stock</Badge>
+                    )}
                     {product.isPopular && (
                       <Badge className="absolute top-3 left-3 bg-primary">
                         Popular
@@ -148,9 +226,10 @@ const Products = () => {
                         onClick={() => handlePayment(product)}
                         className="btn-festive"
                         size="sm"
+                        disabled={product.stock === 0}
                       >
                         <ShoppingCart className="w-4 h-4 mr-2" />
-                        {t('buyNow')}
+                        {product.stock === 0 ? 'Out of Stock' : t('buyNow')}
                       </Button>
                     </div>
                   </CardContent>
@@ -171,6 +250,7 @@ const Products = () => {
             <Button 
               onClick={() => {
                 setSelectedCategory('all');
+                setSelectedSubcategory('all');
                 setSearchTerm('');
               }}
               variant="outline"
