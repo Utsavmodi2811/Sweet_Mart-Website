@@ -1,27 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, ZoomIn } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { galleryImages } from '../data/sampleData';
+
+const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Gallery = () => {
   const { t, i18n } = useTranslation();
   const isGujarati = i18n.language === 'gu';
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch('/api/gallery')
+      .then(res => res.json())
+      .then(data => { setImages(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
 
   const categories = [
     { id: 'all', label: 'All Photos' },
     { id: 'shop', label: t('shopPhotos') },
     { id: 'sweets', label: t('sweetPhotos') },
     { id: 'packaging', label: 'Packaging' },
-    { id: 'festive', label: 'Festival Celebrations' }
+    { id: 'festival', label: 'Festival Celebrations' }
   ];
 
-  const filteredImages = selectedCategory === 'all' 
-    ? galleryImages 
-    : galleryImages.filter(img => img.category === selectedCategory);
+  const filteredImages = selectedCategory === 'all'
+    ? images
+    : images.filter(img => img.category === selectedCategory);
 
   return (
     <div className="min-h-screen py-8 px-4">
@@ -58,22 +69,20 @@ const Gallery = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredImages.map((image, index) => (
             <div 
-              key={image.id} 
+              key={image._id} 
               className="group relative overflow-hidden rounded-xl shadow-soft hover:shadow-festive transition-all duration-500 cursor-pointer animate-fade-in-up"
               style={{ animationDelay: `${index * 0.1}s` }}
-              onClick={() => setSelectedImage(image.src)}
+              onClick={() => setSelectedImage(`${backendUrl}${image.image}`)}
             >
               <img
-                src={image.src}
-                alt={isGujarati ? image.altGu : image.alt}
+                src={`${backendUrl}${image.image}`}
+                alt={image.description || 'Gallery image'}
                 className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
               />
-              
               {/* Overlay */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
                 <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-8 h-8" />
               </div>
-
               {/* Category Badge */}
               <Badge className="absolute top-3 left-3 bg-primary/90 backdrop-blur-sm">
                 {image.category}
@@ -83,7 +92,7 @@ const Gallery = () => {
         </div>
 
         {/* Empty State */}
-        {filteredImages.length === 0 && (
+        {filteredImages.length === 0 && !loading && (
           <div className="text-center py-12">
             <div className="text-muted-foreground">
               <p className="text-lg mb-2">No images found</p>

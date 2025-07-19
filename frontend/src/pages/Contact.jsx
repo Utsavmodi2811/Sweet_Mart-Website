@@ -38,13 +38,13 @@ const Contact = () => {
               <Card className="card-festive">
                 <CardContent className="p-6 text-center">
                   <Phone className="w-8 h-8 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">{t('phoneNumber')}</h3>
-                  <p className="text-muted-foreground">+91 98765 43210</p>
+                  <h3 className="font-semibold mb-2">Phone Number</h3>
+                  <p className="text-muted-foreground">+91 91736 10885</p>
                   <Button 
                     variant="outline" 
                     size="sm" 
                     className="mt-3"
-                    onClick={() => window.open('tel:+919876543210')}
+                    onClick={() => window.open('tel:+919173610885')}
                   >
                     Call Now
                   </Button>
@@ -54,13 +54,13 @@ const Contact = () => {
               <Card className="card-festive">
                 <CardContent className="p-6 text-center">
                   <Mail className="w-8 h-8 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">{t('emailAddress')}</h3>
-                  <p className="text-muted-foreground">info@shrikrishnasweets.com</p>
+                  <h3 className="font-semibold mb-2">Email Address</h3>
+                  <p className="text-muted-foreground">utsavmodi1128@gmail.com</p>
                   <Button 
                     variant="outline" 
                     size="sm" 
                     className="mt-3"
-                    onClick={() => window.open('mailto:info@shrikrishnasweets.com')}
+                    onClick={() => window.open('mailto:utsavmodi1128@gmail.com')}
                   >
                     Send Email
                   </Button>
@@ -71,86 +71,88 @@ const Contact = () => {
             {/* Address */}
             <Card className="card-festive">
               <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <MapPin className="w-6 h-6 text-primary mt-1" />
-                  <div>
-                    <h3 className="font-semibold mb-2">{t('ourLocation')}</h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      123 Gandhi Road, Maninagar<br />
-                      Ahmedabad, Gujarat 380008<br />
-                      India
-                    </p>
-                    <Button 
-                      className="btn-festive mt-4"
-                      onClick={() => window.open('https://maps.google.com/?q=23.0225,72.5714')}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* New Shop */}
+                  <div className="flex flex-col items-center text-center">
+                    <h3 className="font-semibold mb-2">Shree Krishna - Sweet - Namkin - Bakery (New Shop)</h3>
+                    <a
+                      href="https://maps.app.goo.gl/JqVDtD41PDzkdta8A"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary underline mb-2"
                     >
-                      Get Directions
-                    </Button>
+                      View on Google Maps
+                    </a>
+                    <iframe
+                      src="https://www.google.com/maps?q=Shree+Krishna+Sweet+Namkin+Bakery,+JqVDtD41PDzkdta8A&output=embed"
+                      width="100%"
+                      height="200"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="rounded-xl mb-2"
+                    ></iframe>
+                    <div className="flex items-center justify-center gap-2 mt-2">
+                      <Clock className="w-4 h-4 text-primary" />
+                      <span className="text-sm">9:00 AM - 8:00 PM (All days)</span>
+                    </div>
+                  </div>
+                  {/* Old Shop */}
+                  <div className="flex flex-col items-center text-center">
+                    <h3 className="font-semibold mb-2">Shree Krishna Seet Mart (Old Shop)</h3>
+                    <a
+                      href="https://maps.app.goo.gl/z1fmH4pUyZbxguKC6"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary underline mb-2"
+                    >
+                      View on Google Maps
+                    </a>
+                    <iframe
+                      src="https://www.google.com/maps?q=Shree+Krishna+Seet+Mart,+z1fmH4pUyZbxguKC6&output=embed"
+                      width="100%"
+                      height="200"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="rounded-xl mb-2"
+                    ></iframe>
+                    <div className="flex items-center justify-center gap-2 mt-2">
+                      <Clock className="w-4 h-4 text-primary" />
+                      <span className="text-sm">9:00 AM - 8:00 PM (All days)</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Opening Hours */}
-            <Card className="card-festive">
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <Clock className="w-6 h-6 text-primary mt-1" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold mb-4">{t('openingHours')}</h3>
-                    <div className="space-y-2">
-                      {openingHours.map((schedule, index) => (
-                        <div key={index} className="flex justify-between text-sm">
-                          <span className="font-medium">{schedule.day}</span>
-                          <span className="text-muted-foreground">{schedule.hours}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Removed old opening hours card as timings are now shown with each shop */}
           </div>
 
           {/* Map and About */}
           <div className="space-y-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             {/* Google Map */}
-            <Card className="card-festive">
-              <CardContent className="p-0">
-                <div className="relative">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.5692523425043!2d72.5692!3d23.0225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e848aba5bd449%3A0x4fcedd11614f6516!2sAhmedabad%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin"
-                    width="100%"
-                    height="300"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="rounded-xl"
-                  ></iframe>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Removed old single map card */}
 
             {/* About Us */}
             <Card className="card-festive">
               <CardContent className="p-6">
                 <h3 className="font-baloo font-bold text-xl gradient-text mb-4 flex items-center">
                   <Heart className="w-5 h-5 mr-2" />
-                  {t('aboutUs')}
+                  About Us
                 </h3>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    For over three generations, Shree Krishna Sweets has been serving authentic 
-                    traditional Indian sweets to families across Gujarat. What started as a small 
-                    family business has grown into a beloved institution, yet we've never lost 
-                    our commitment to quality and tradition.
+                    Shree Krishna Sweets has been a symbol of tradition and quality for over three generations in Gujarat. From our humble beginnings as a small family shop, we have grown into a beloved destination for sweet lovers, while always staying true to our roots.
                   </p>
                   <p>
-                    Every sweet in our shop is made fresh daily using time-honored recipes passed 
-                    down through our family. We use only the finest ingredients - pure ghee, 
-                    premium dry fruits, and organic milk - to ensure every bite is a celebration 
-                    of authentic taste.
+                    Every sweet is made fresh daily using recipes passed down through our family. We use only the best ingredients—pure ghee, premium dry fruits, and fresh milk—so every bite is a celebration of authentic taste and quality.
+                  </p>
+                  <p>
+                    We are proud to serve thousands of happy customers and to be a part of your celebrations and memories. Thank you for making us a part of your family!
                   </p>
                   <div className="flex items-center space-x-6 pt-4 border-t border-border">
                     <div className="text-center">

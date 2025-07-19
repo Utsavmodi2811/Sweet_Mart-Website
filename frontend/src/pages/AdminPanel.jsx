@@ -242,81 +242,18 @@ function AdminPanel() {
     <div className="p-4 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Admin Panel - Manage Products</h1>
-        <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
       </div>
 
       {/* Festival Product Management */}
-      <div className="mb-8 bg-gradient-to-br from-pink-100 to-yellow-100 rounded-lg shadow p-4">
-        <h2 className="text-lg font-bold mb-2 flex items-center gap-2"><Upload className="w-5 h-5 text-pink-500" /> Festival Product Management</h2>
-        <p className="text-sm text-muted-foreground mb-2">Add, edit, or delete the festival products that will appear in the festival section on your home page. Each product should have a name, image, and (optionally) a description.</p>
-        <form onSubmit={handleFestivalSubmit} className="flex flex-col md:flex-row gap-2 items-center mb-4">
-          <input
-            name="name"
-            value={festivalForm.name}
-            onChange={handleFestivalChange}
-            placeholder="Festival Name"
-            className="border p-2 rounded flex-1"
-            required
-          />
-          <input
-            name="description"
-            value={festivalForm.description}
-            onChange={handleFestivalChange}
-            placeholder="Description (optional)"
-            className="border p-2 rounded flex-1"
-          />
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={e => {
-              if (e.target.files && e.target.files[0]) {
-                setFestivalForm(f => ({ ...f, imageFile: e.target.files[0] }));
-              }
-            }}
-            className="border p-2 rounded flex-1"
-          />
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" disabled={festivalLoading}>
-            {festivalEditingId ? 'Update' : 'Add'}
-          </button>
-          {festivalEditingId && (
-            <button type="button" className="bg-gray-400 text-white px-4 py-2 rounded" onClick={() => { setFestivalForm({ name: '', image: '', imageFile: null, description: '' }); setFestivalEditingId(null); }}>
-              Cancel
-            </button>
-          )}
-        </form>
-        {/* Image preview */}
-        {festivalForm.imageFile && (
-          <div className="mb-2 flex items-center gap-2">
-            <img src={URL.createObjectURL(festivalForm.imageFile)} alt="Preview" className="w-16 h-16 object-cover rounded" />
-            <span className="text-xs text-muted-foreground">Image Preview</span>
-          </div>
-        )}
-        {festivalError && <div className="text-red-500 mb-2">{festivalError}</div>}
-        <table className="w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 border">Image</th>
-              <th className="p-2 border">Festival Name</th>
-              <th className="p-2 border">Description</th>
-              <th className="p-2 border">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {festivalProducts.map((f) => (
-              <tr key={f._id}>
-                <td className="border p-2"><img src={f.image} alt={f.name} className="w-16 h-16 object-cover rounded" /></td>
-                <td className="border p-2">{f.name}</td>
-                <td className="border p-2">{f.description || '-'}</td>
-                <td className="border p-2">
-                  <button onClick={() => handleFestivalEdit(f)} className="mr-2 text-blue-600">Edit</button>
-                  <button onClick={() => handleFestivalDelete(f._id)} className="text-red-600">Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* Image preview */}
+      {festivalForm.imageFile && (
+        <div className="mb-2 flex items-center gap-2">
+          <img src={URL.createObjectURL(festivalForm.imageFile)} alt="Preview" className="w-16 h-16 object-cover rounded" />
+          <span className="text-xs text-muted-foreground">Image Preview</span>
+        </div>
+      )}
+      {festivalError && <div className="text-red-500 mb-2">{festivalError}</div>}
+      {/* Festival product table removed */}
 
       {/* Product Management UI */}
       <div className="mb-8 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg shadow p-4">
@@ -363,11 +300,11 @@ function AdminPanel() {
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2 border">Image</th>
-              <th className="p-2 border">Name</th>
+              <th className="p-2 border">Item Name</th>
               <th className="p-2 border">Category</th>
               <th className="p-2 border">Subcategory</th>
               <th className="p-2 border">Price</th>
-              <th className="p-2 border">Stock</th>
+              <th className="p-2 border">Stock (Quantity Available, 0 means Out of Stock)</th>
               <th className="p-2 border">Actions</th>
             </tr>
           </thead>
