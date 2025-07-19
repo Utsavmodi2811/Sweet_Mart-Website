@@ -55,4 +55,19 @@ exports.deleteImage = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
+};
+
+// Like a gallery image
+exports.likeImage = async (req, res) => {
+  try {
+    const image = await GalleryImage.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { likes: 1 } },
+      { new: true }
+    );
+    if (!image) return res.status(404).json({ error: 'Image not found' });
+    res.json({ likes: image.likes });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 }; 

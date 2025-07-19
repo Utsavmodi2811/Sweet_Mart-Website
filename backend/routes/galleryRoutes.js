@@ -11,5 +11,7 @@ router.post('/', upload.single('image'), galleryController.uploadImage);
 router.put('/:id', upload.single('image'), galleryController.updateImage);
 // Delete image
 router.delete('/:id', galleryController.deleteImage);
+// Like an image
+router.post('/:id/like', galleryController.likeImage);
 
 module.exports = router; 
